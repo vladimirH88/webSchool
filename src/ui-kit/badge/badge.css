@@ -1,0 +1,25 @@
+.ui-badge {
+  display: inline-flex;
+  align-items: center;
+}
+
+.ui-badge--success {
+  color: #267c59;
+  background: #eaf5ed;
+}
+
+.ui-badge--neutral {
+  color: #778079;
+}
+
+.ui-badge--warning {
+  color: #9c8050;
+}
+
+.completed-badge {
+  margin-left: auto;
+  padding: 5px 8px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 600;
+}

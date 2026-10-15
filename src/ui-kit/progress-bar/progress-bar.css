@@ -1,0 +1,14 @@
+.ui-progress-bar {
+  height: 4px;
+  overflow: hidden;
+  background: #edf0ed;
+  border-radius: 10px;
+}
+
+.ui-progress-bar > span {
+  height: 100%;
+  display: block;
+  background: #48a37d;
+  border-radius: inherit;
+  transition: width 250ms ease;
+}
