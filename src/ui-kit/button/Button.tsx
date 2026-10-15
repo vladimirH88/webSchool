@@ -4,13 +4,13 @@ import './button.css';
 type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'text' | 'unstyled';
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: ButtonVariant;
+  variant: ButtonVariant;
 };
 
 export function Button({
   children,
   className = '',
-  variant = 'secondary',
+  variant,
   ...props
 }: ButtonProps) {
   return (
