@@ -637,6 +637,91 @@ h1 {
   white-space: pre-wrap;
 }
 
+.lesson-walkthrough {
+  margin-top: 9px;
+  padding: 10px 11px;
+  background: #f7f8f6;
+  border-left: 2px solid #aeb9af;
+  border-radius: 0 5px 5px 0;
+}
+
+.lesson-walkthrough strong {
+  color: #536057;
+  font-size: 9px;
+}
+
+.lesson-walkthrough p {
+  margin: 5px 0 0;
+  color: #737d75;
+  font-size: 9px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.lesson-practice {
+  margin-top: 12px;
+  padding: 14px 16px;
+  background: #fff;
+  border: 1px solid #e8ece8;
+  border-radius: 8px;
+}
+
+.lesson-practice-heading {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.lesson-practice-heading > span {
+  width: 25px;
+  height: 25px;
+  display: grid;
+  place-items: center;
+  color: #348765;
+  background: #eaf5ed;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.lesson-practice-heading > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.lesson-practice-heading strong {
+  color: #39413c;
+  font-size: 10px;
+}
+
+.lesson-practice-heading small {
+  color: #929b94;
+  font-size: 8px;
+}
+
+.lesson-practice ol {
+  display: grid;
+  gap: 7px;
+  margin: 12px 0 0;
+  padding-left: 20px;
+  color: #68736b;
+  font-size: 9px;
+  line-height: 1.7;
+}
+
+.lesson-practice li {
+  padding-left: 3px;
+}
+
+.lesson-practice-result {
+  margin: 11px 0 0;
+  padding-top: 9px;
+  color: #548064;
+  border-top: 1px solid #edf0ed;
+  font-size: 9px;
+  line-height: 1.65;
+}
+
 .challenge-heading {
   position: relative;
   margin-top: 27px;

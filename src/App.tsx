@@ -346,7 +346,35 @@ export default function App() {
                     <pre>{lesson.exampleOutput}</pre>
                   </div>
                 )}
+                {lesson.exampleExplanation && (
+                  <div className="lesson-walkthrough">
+                    <strong>Как это работает</strong>
+                    <p>{lesson.exampleExplanation}</p>
+                  </div>
+                )}
               </Card>
+
+              {lesson.practiceSteps && (
+                <Card className="lesson-practice">
+                  <div className="lesson-practice-heading">
+                    <span>↗</span>
+                    <div>
+                      <strong>Попробуй самостоятельно</strong>
+                      <small>Практика в своей Docker-среде</small>
+                    </div>
+                  </div>
+                  <ol>
+                    {lesson.practiceSteps.map((step) => (
+                      <li key={step}>{step}</li>
+                    ))}
+                  </ol>
+                  {lesson.expectedResult && (
+                    <p className="lesson-practice-result">
+                      <strong>Проверь себя:</strong> {lesson.expectedResult}
+                    </p>
+                  )}
+                </Card>
+              )}
 
               <div className="challenge-heading">
                 <span className="challenge-icon">↗</span>

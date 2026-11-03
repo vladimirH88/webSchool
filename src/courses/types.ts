@@ -16,7 +16,10 @@ export type CourseLesson = {
   concept: string;
   details?: string[];
   example: string;
+  exampleExplanation?: string;
   exampleOutput?: string;
+  practiceSteps?: string[];
+  expectedResult?: string;
   challenge: string;
   tip: string;
   mode: 'practice' | 'reading';
