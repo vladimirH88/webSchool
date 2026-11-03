@@ -31,7 +31,7 @@ npm run build
 
 Перед первой публикацией в настройках репозитория в разделе **Settings → Pages**
 выбери **Build and deployment → Source: GitHub Actions**. После этого GitHub
-Actions автоматически собирает и публикует приложение при обновлении ветки
-`develop`. Ручной запуск доступен во вкладке **Actions** через workflow **Deploy
-to GitHub Pages**. Сайт публикуется по адресу
+Actions собирает и публикует приложение при обновлении веток `main` и `develop`.
+Ручной запуск доступен во вкладке **Actions** через workflow **Deploy to GitHub
+Pages**. Сайт публикуется по адресу
 https://vladimirh88.github.io/webSchool/.
