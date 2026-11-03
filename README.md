@@ -26,3 +26,10 @@ npm run dev
 ```sh
 npm run build
 ```
+
+## Публикация
+
+GitHub Actions автоматически собирает и публикует приложение в GitHub Pages при
+обновлении ветки `develop`. Ручной запуск доступен во вкладке **Actions** через
+workflow **Deploy to GitHub Pages**. Сайт публикуется по адресу
+https://vladimirh88.github.io/webSchool/.
