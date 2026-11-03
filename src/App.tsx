@@ -2,6 +2,7 @@ import { useMemo, useState, type CSSProperties } from 'react';
 import { Badge, BrandMark, Button, Card, ProgressBar } from './ui-kit';
 import { courses } from './courses/registry';
 import type { CourseLesson, CourseModule } from './courses/types';
+import { appName } from './appConfig';
 
 function countLabel(
   count: number,
@@ -78,7 +79,7 @@ export default function App() {
         <a
           className="platform-brand"
           href="#"
-          aria-label="Учись шире — на главную"
+          aria-label={`${appName} — на главную`}
           onClick={(event) => {
             event.preventDefault();
             openCatalog();
@@ -87,9 +88,7 @@ export default function App() {
           <span className="platform-brand-mark">
             <BrandMark />
           </span>
-          <span>
-            учись<span className="platform-brand-accent">.</span>
-          </span>
+          <span>{appName}</span>
         </a>
 
         <Button

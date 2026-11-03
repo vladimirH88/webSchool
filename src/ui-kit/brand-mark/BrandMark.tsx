@@ -1,6 +1,6 @@
 import './brand-mark.css';
 
-/** Рисует декоративный знак SQLook в виде встроенного SVG. */
+/** Рисует декоративный знак платформы в виде встроенного SVG. */
 export function BrandMark() {
   return (
     <svg className="ui-brand-mark" viewBox="0 0 32 32" aria-hidden="true">
