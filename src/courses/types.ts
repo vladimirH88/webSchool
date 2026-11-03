@@ -14,7 +14,9 @@ export type CourseLesson = {
   subtitle: string;
   description: string;
   concept: string;
+  details?: string[];
   example: string;
+  exampleOutput?: string;
   challenge: string;
   tip: string;
   mode: 'practice' | 'reading';

@@ -545,6 +545,29 @@ h1 {
   line-height: 1.75;
 }
 
+.lesson-details {
+  display: grid;
+  gap: 7px;
+  margin: 0 0 14px;
+  padding: 0;
+  color: #68736b;
+  font-size: 10px;
+  line-height: 1.65;
+  list-style: none;
+}
+
+.lesson-details li {
+  position: relative;
+  padding-left: 14px;
+}
+
+.lesson-details li::before {
+  position: absolute;
+  left: 1px;
+  color: #43a17b;
+  content: '•';
+}
+
 .concept-card p code {
   padding: 2px 4px;
   color: #297858;
@@ -555,26 +578,63 @@ h1 {
 }
 
 .example-query {
-  min-height: 38px;
   display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0 11px;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 11px;
   background: #f7f9f7;
   border: 1px solid #eff1ee;
   border-radius: 5px;
 }
 
 .example-prompt {
+  flex: 0 0 auto;
+  padding-top: 1px;
   color: #9da69f;
   font-family: var(--mono);
   font-size: 9px;
+}
+
+.example-query pre {
+  min-width: 0;
+  margin: 0;
+  overflow-x: auto;
 }
 
 .example-query code {
   color: #555d57;
   font-family: var(--mono);
   font-size: 10px;
+  line-height: 1.75;
+  white-space: pre-wrap;
+}
+
+.example-output {
+  display: flex;
+  gap: 14px;
+  margin-top: 7px;
+  padding: 9px 11px;
+  background: #f0f7f1;
+  border: 1px solid #e4eee5;
+  border-radius: 5px;
+}
+
+.example-output > span {
+  flex: 0 0 auto;
+  color: #558368;
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.example-output pre {
+  min-width: 0;
+  margin: 0;
+  overflow-x: auto;
+  color: #496052;
+  font-family: var(--mono);
+  font-size: 9px;
+  line-height: 1.65;
+  white-space: pre-wrap;
 }
 
 .challenge-heading {

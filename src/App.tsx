@@ -327,10 +327,25 @@ export default function App() {
                   </div>
                 </div>
                 <p>{lesson.concept}</p>
+                {lesson.details && (
+                  <ul className="lesson-details">
+                    {lesson.details.map((detail) => (
+                      <li key={detail}>{detail}</li>
+                    ))}
+                  </ul>
+                )}
                 <div className="example-query">
                   <span className="example-prompt">{activeCourse.title}</span>
-                  <code>{lesson.example}</code>
+                  <pre>
+                    <code>{lesson.example}</code>
+                  </pre>
                 </div>
+                {lesson.exampleOutput && (
+                  <div className="example-output">
+                    <span>Результат</span>
+                    <pre>{lesson.exampleOutput}</pre>
+                  </div>
+                )}
               </Card>
 
               <div className="challenge-heading">
