@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока «Псевдонимы столбцов». */
 export default createLesson(1, {
   title: 'Псевдонимы столбцов',
   subtitle: 'AS',

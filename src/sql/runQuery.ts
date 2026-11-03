@@ -1,9 +1,11 @@
+/** Результат выполнения поддерживаемого SQL-запроса или описание ошибки. */
 export type QueryResult = {
   columns: string[];
   rows: Array<Record<string, string | number>>;
   error?: string;
 };
 
+/** Запись демонстрационной таблицы `employees`. */
 type Employee = {
   id: number;
   name: string;
@@ -13,6 +15,7 @@ type Employee = {
   city: string;
 };
 
+/** Разобранный столбец или агрегат из списка SELECT. */
 type Projection =
   | { kind: 'column'; column: keyof Employee; label: string }
   | {
@@ -22,6 +25,7 @@ type Projection =
       label: string;
     };
 
+/** Демонстрационные данные, на которых выполняются учебные запросы. */
 const employees: Employee[] = [
   {
     id: 1,
@@ -89,6 +93,7 @@ const employees: Employee[] = [
   },
 ];
 
+/** Имена доступных столбцов таблицы `employees`. */
 const employeeColumns = [
   'id',
   'name',
@@ -98,10 +103,12 @@ const employeeColumns = [
   'city',
 ] as const;
 
+/** Проверяет, что имя соответствует столбцу таблицы `employees`. */
 function isEmployeeColumn(value: string): value is keyof Employee {
   return employeeColumns.some((column) => column === value);
 }
 
+/** Разбирает выражение SELECT в столбец или поддерживаемый агрегат. */
 function parseProjection(expression: string): Projection | null {
   const aggregate = expression.match(
     /^(COUNT|SUM|AVG|MIN|MAX)\s*\(\s*(\*|[a-z_]+)\s*\)(?:\s+AS\s+([a-z_]+))?$/i,
@@ -133,12 +140,14 @@ function parseProjection(expression: string): Projection | null {
   return { kind: 'column', column, label: (alias ?? column).toLowerCase() };
 }
 
+/** Сравнивает числовые значения как числа, остальные — по русской локали. */
 function compareValues(left: string | number, right: string | number): number {
   if (typeof left === 'number' && typeof right === 'number')
     return left - right;
   return String(left).localeCompare(String(right), 'ru');
 }
 
+/** Разбирает условие WHERE и возвращает предикат для строки сотрудника. */
 function parseCondition(
   condition: string,
 ): ((employee: Employee) => boolean) | null {
@@ -204,6 +213,7 @@ function parseCondition(
   };
 }
 
+/** Вычисляет значение поддерживаемой агрегатной функции для группы строк. */
 function aggregateValue(
   projection: Extract<Projection, { kind: 'aggregate' }>,
   rows: Employee[],
@@ -232,6 +242,7 @@ function aggregateValue(
   }
 }
 
+/** Проверяет, удовлетворяет ли группа условию HAVING. */
 function evaluateHaving(
   expression: string,
   projections: Projection[],
@@ -267,10 +278,17 @@ function evaluateHaving(
   }
 }
 
+/** Создаёт результат запроса, содержащий сообщение об ошибке. */
 function error(message: string): QueryResult {
   return { columns: [], rows: [], error: message };
 }
 
+/**
+ * Выполняет поддерживаемый учебный поднабор SELECT по таблице `employees`.
+ *
+ * @param input SQL-запрос с поддержкой WHERE, GROUP BY, HAVING, ORDER BY и LIMIT.
+ * @returns Столбцы и строки результата либо сообщение о некорректном запросе.
+ */
 export function runQuery(input: string): QueryResult {
   const query = input.trim().replace(/;+\s*$/, '');
   const match = query.match(

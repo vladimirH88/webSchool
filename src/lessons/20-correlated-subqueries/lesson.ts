@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока о коррелированных подзапросах. */
 export default createLesson(4, {
   title: 'Коррелированные подзапросы',
   subtitle: 'внешняя ссылка · повторное вычисление',

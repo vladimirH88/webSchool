@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока о блокировках и взаимных блокировках. */
 export default createLesson(7, {
   title: 'Блокировки и дедлоки',
   subtitle: 'LOCKS · DEADLOCKS',

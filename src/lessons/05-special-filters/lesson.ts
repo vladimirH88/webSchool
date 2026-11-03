@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока «Специальные операторы фильтрации». */
 export default createLesson(1, {
   title: 'Специальные операторы фильтрации',
   subtitle: 'IN · BETWEEN · LIKE · IS NULL',

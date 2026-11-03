@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока «Фильтрация групп с помощью HAVING». */
 export default createLesson(2, {
   title: 'Фильтрация групп',
   subtitle: 'HAVING',

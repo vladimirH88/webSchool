@@ -1,5 +1,8 @@
 import { createLesson } from '../types';
 
+/**
+ * Практический урок о соединении таблиц по совпадающим ключам с помощью INNER JOIN.
+ */
 export default createLesson(3, {
   title: 'Внутреннее соединение',
   subtitle: 'INNER JOIN',

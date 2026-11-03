@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока об операциях над множествами результатов запросов. */
 export default createLesson(3, {
   title: 'Множественные операции',
   subtitle: 'UNION · INTERSECT · EXCEPT',

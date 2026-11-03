@@ -12,6 +12,7 @@ import {
   ProgressBar,
 } from './ui-kit';
 
+/** Отображает интерфейс тренажёра и управляет состоянием прохождения уроков. */
 export default function App() {
   const [activeLesson, setActiveLesson] = useState(0);
   const [query, setQuery] = useState(lessons[0].query);
@@ -26,6 +27,7 @@ export default function App() {
       ? JSON.stringify(result) === JSON.stringify(runQuery(lesson.solution))
       : false;
 
+  /** Переключает активный урок и сбрасывает его временное состояние. */
   function selectLesson(index: number) {
     setActiveLesson(index);
     setQuery(lessons[index].query);
@@ -33,6 +35,7 @@ export default function App() {
     setShowHint(false);
   }
 
+  /** Выполняет текущий SQL-запрос и отмечает урок пройденным при верном ответе. */
   function executeQuery() {
     const nextResult = runQuery(query);
     setResult(nextResult);
@@ -48,6 +51,7 @@ export default function App() {
     }
   }
 
+  /** Отмечает текущий теоретический урок пройденным. */
   function completeLesson() {
     setCompleted((previous) =>
       previous.includes(activeLesson) ? previous : [...previous, activeLesson],

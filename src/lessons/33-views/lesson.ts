@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока о представлениях и материализованных представлениях. */
 export default createLesson(6, {
   title: 'Представления',
   subtitle: 'VIEW · MATERIALIZED VIEW',

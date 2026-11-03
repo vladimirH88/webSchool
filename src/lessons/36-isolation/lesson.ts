@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока об уровнях изоляции транзакций. */
 export default createLesson(7, {
   title: 'Уровни изоляции',
   subtitle: 'READ COMMITTED · REPEATABLE READ · SERIALIZABLE',

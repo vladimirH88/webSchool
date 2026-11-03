@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока «Базовый синтаксис SELECT и FROM». */
 export default createLesson(1, {
   title: 'Базовый синтаксис',
   subtitle: 'SELECT · FROM',

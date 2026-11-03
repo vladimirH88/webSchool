@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока об оконных функциях SQL. */
 export default createLesson(5, {
   title: 'Оконные функции',
   subtitle: 'ROW_NUMBER · RANK · LEAD · LAG · OVER',

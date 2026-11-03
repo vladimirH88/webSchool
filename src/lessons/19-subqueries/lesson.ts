@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока о подзапросах в SQL. */
 export default createLesson(4, {
   title: 'Подзапросы',
   subtitle: 'WHERE · FROM · SELECT',

@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока «Группировка с помощью GROUP BY». */
 export default createLesson(2, {
   title: 'Группировка',
   subtitle: 'GROUP BY',

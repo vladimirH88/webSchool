@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока о логическом порядке выполнения SQL-запроса. */
 export default createLesson(2, {
   title: 'Порядок выполнения запроса',
   subtitle: 'FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → LIMIT',

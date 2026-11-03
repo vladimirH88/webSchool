@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока «Операторы сравнения и логики». */
 export default createLesson(1, {
   title: 'Операторы сравнения и логики',
   subtitle: '= · <> · AND · OR · NOT',

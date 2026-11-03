@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока о декартовых и самосоединениях таблиц. */
 export default createLesson(3, {
   title: 'CROSS JOIN и SELF JOIN',
   subtitle: 'декартово произведение · таблица с собой',

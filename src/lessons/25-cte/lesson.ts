@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока об обобщённых табличных выражениях CTE. */
 export default createLesson(5, {
   title: 'Обобщённые табличные выражения',
   subtitle: 'WITH · CTE',

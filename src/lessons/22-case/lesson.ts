@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока об условной логике CASE WHEN. */
 export default createLesson(4, {
   title: 'Условная логика',
   subtitle: 'CASE WHEN',

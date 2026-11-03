@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока о связях и ключах в базе данных. */
 export default createLesson(3, {
   title: 'Связи и ключи в БД',
   subtitle: 'PRIMARY KEY · FOREIGN KEY',

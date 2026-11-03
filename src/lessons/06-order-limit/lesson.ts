@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока «Сортировка и ограничение результатов». */
 export default createLesson(1, {
   title: 'Сортировка и лимиты',
   subtitle: 'ORDER BY · LIMIT',

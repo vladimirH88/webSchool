@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока о нормализации реляционных баз данных. */
 export default createLesson(6, {
   title: 'Нормализация баз данных',
   subtitle: '1НФ · 2НФ · 3НФ',

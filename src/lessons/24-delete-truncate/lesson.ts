@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока о командах DELETE и TRUNCATE. */
 export default createLesson(4, {
   title: 'DELETE и TRUNCATE',
   subtitle: 'удаление строк · очистка таблицы',

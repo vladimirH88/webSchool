@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока о безопасности и управлении правами доступа. */
 export default createLesson(7, {
   title: 'Безопасность и права',
   subtitle: 'GRANT · REVOKE · DCL',

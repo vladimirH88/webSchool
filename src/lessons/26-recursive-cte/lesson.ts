@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока о рекурсивных CTE. */
 export default createLesson(5, {
   title: 'Рекурсивные CTE',
   subtitle: 'WITH RECURSIVE',

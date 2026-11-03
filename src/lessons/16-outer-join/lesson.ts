@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока о внешних соединениях таблиц. */
 export default createLesson(3, {
   title: 'Внешние соединения',
   subtitle: 'LEFT · RIGHT · FULL OUTER JOIN',

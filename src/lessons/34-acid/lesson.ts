@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока о транзакциях и принципах ACID. */
 export default createLesson(7, {
   title: 'Транзакции и ACID',
   subtitle: 'атомарность · согласованность · изоляция · надёжность',

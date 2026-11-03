@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока об индексах баз данных. */
 export default createLesson(6, {
   title: 'Индексы',
   subtitle: 'B-дерево · составные · кластеризация',

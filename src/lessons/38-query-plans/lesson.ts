@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока об анализе и оптимизации планов запросов. */
 export default createLesson(7, {
   title: 'Оптимизация запросов',
   subtitle: 'EXPLAIN · ANALYZE',

@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока о процедурах, функциях и триггерах. */
 export default createLesson(7, {
   title: 'Процедуры, функции и триггеры',
   subtitle: 'programmable objects',

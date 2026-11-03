@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока «Введение в базы данных». */
 export default createLesson(1, {
   title: 'Введение в базы данных',
   subtitle: 'таблицы · строки · связи',

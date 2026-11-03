@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока «Агрегатные функции». */
 export default createLesson(2, {
   title: 'Агрегатные функции',
   subtitle: 'COUNT · SUM · AVG · MIN · MAX',

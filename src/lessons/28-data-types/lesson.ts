@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока о продвинутых типах данных. */
 export default createLesson(5, {
   title: 'Продвинутые типы данных',
   subtitle: 'строки · даты · JSON / JSONB',

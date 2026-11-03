@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока «Уникальные значения с помощью DISTINCT». */
 export default createLesson(1, {
   title: 'Уникальные значения',
   subtitle: 'DISTINCT',

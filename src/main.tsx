@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import App from './App';
 import './style.css';
 
+/** Находит корневой элемент приложения и монтирует React-интерфейс. */
 const rootElement = document.getElementById('root');
 
 if (!rootElement) {

@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока «Фильтрация данных с помощью WHERE». */
 export default createLesson(1, {
   title: 'Фильтрация данных',
   subtitle: 'WHERE',

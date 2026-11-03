@@ -1,3 +1,4 @@
+/** Метаданные семи уровней курса в порядке прохождения. */
 export const courseLevels = [
   { id: 1, title: 'Основы', label: 'Базовый', marker: '🟢' },
   { id: 2, title: 'Агрегация и группировка', label: 'Средний', marker: '🟡' },
@@ -18,8 +19,10 @@ export const courseLevels = [
   },
 ] as const;
 
+/** Допустимый идентификатор уровня курса. */
 export type CourseLevelId = (typeof courseLevels)[number]['id'];
 
+/** Полное представление урока, используемое интерфейсом тренажёра. */
 export type Lesson = {
   section: CourseLevelId;
   sectionTitle: string;
@@ -36,6 +39,7 @@ export type Lesson = {
   tip: string;
 };
 
+/** Поля урока, передаваемые при его создании; запрос и решение необязательны. */
 type LessonContent = Pick<
   Lesson,
   'title' | 'subtitle' | 'concept' | 'example' | 'challenge' | 'tip'
@@ -44,6 +48,14 @@ type LessonContent = Pick<
   query?: string;
 };
 
+/**
+ * Создаёт урок и дополняет его данными выбранного уровня курса.
+ *
+ * @param section Идентификатор уровня курса.
+ * @param content Основное содержание урока.
+ * @returns Полностью сформированный урок для отображения в приложении.
+ * @throws {Error} Если указанный уровень отсутствует в списке курса.
+ */
 export function createLesson(
   section: CourseLevelId,
   content: LessonContent,

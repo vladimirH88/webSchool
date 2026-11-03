@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока об ограничениях целостности данных. */
 export default createLesson(6, {
   title: 'Ограничения целостности',
   subtitle: 'PRIMARY KEY · FOREIGN KEY · UNIQUE · CHECK · DEFAULT',

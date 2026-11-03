@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока «Работа с NULL». */
 export default createLesson(1, {
   title: 'Работа с NULL',
   subtitle: 'COALESCE · NULLIF',

@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока об операторах EXISTS и NOT EXISTS. */
 export default createLesson(4, {
   title: 'EXISTS и NOT EXISTS',
   subtitle: 'проверка наличия строк',

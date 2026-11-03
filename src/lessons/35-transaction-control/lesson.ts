@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока об управлении транзакциями. */
 export default createLesson(7, {
   title: 'Управление транзакциями',
   subtitle: 'BEGIN · COMMIT · ROLLBACK',

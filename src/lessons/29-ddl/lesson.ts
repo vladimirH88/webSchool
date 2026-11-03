@@ -1,5 +1,6 @@
 import { createLesson } from '../types';
 
+/** Материалы урока о командах создания и изменения структуры базы данных. */
 export default createLesson(6, {
   title: 'Создание и изменение структуры',
   subtitle: 'CREATE · ALTER · DROP',
