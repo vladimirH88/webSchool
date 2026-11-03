@@ -1,474 +1,469 @@
-import { useState } from 'react';
-import { lessons } from './lessons';
-import { courseLevels, type Lesson } from './lessons/types';
-import type { QueryResult } from './sql/runQuery';
-import { runQuery } from './sql/runQuery';
-import {
-  Badge,
-  BrandMark,
-  Button,
-  Card,
-  DataTable,
-  ProgressBar,
-} from './ui-kit';
+import { useMemo, useState, type CSSProperties } from 'react';
+import { Badge, BrandMark, Button, Card, ProgressBar } from './ui-kit';
+import { courses } from './courses/registry';
+import type { CourseLesson, CourseModule } from './courses/types';
 
-/** Отображает интерфейс тренажёра и управляет состоянием прохождения уроков. */
+function countLabel(
+  count: number,
+  forms: [singular: string, paucal: string, plural: string],
+) {
+  const remainder100 = count % 100;
+  const remainder10 = count % 10;
+  const formIndex =
+    remainder100 >= 11 && remainder100 <= 14
+      ? 2
+      : remainder10 === 1
+        ? 0
+        : remainder10 >= 2 && remainder10 <= 4
+          ? 1
+          : 2;
+  return `${count} ${forms[formIndex]}`;
+}
+
+/** Отображает каталог направлений и универсальный интерфейс прохождения уроков. */
 export default function App() {
-  const [activeLesson, setActiveLesson] = useState(0);
-  const [query, setQuery] = useState(lessons[0].query);
-  const [result, setResult] = useState<QueryResult | null>(null);
-  const [completed, setCompleted] = useState<number[]>([]);
-  const [showHint, setShowHint] = useState(false);
-  const [showPreview, setShowPreview] = useState(false);
-  const lesson: Lesson = lessons[activeLesson];
-  const progress = Math.round((completed.length / lessons.length) * 100);
-  const isCorrect =
-    result && !result.error
-      ? JSON.stringify(result) === JSON.stringify(runQuery(lesson.solution))
-      : false;
+  const [activeCourseId, setActiveCourseId] = useState<string | null>(null);
+  const [activeLessonId, setActiveLessonId] = useState<string | null>(null);
+  const [completedByCourse, setCompletedByCourse] = useState<
+    Record<string, string[]>
+  >({});
+  const [search, setSearch] = useState('');
 
-  /** Переключает активный урок и сбрасывает его временное состояние. */
-  function selectLesson(index: number) {
-    setActiveLesson(index);
-    setQuery(lessons[index].query);
-    setResult(null);
-    setShowHint(false);
-  }
-
-  /** Выполняет текущий SQL-запрос и отмечает урок пройденным при верном ответе. */
-  function executeQuery() {
-    const nextResult = runQuery(query);
-    setResult(nextResult);
-    if (
-      !nextResult.error &&
-      JSON.stringify(nextResult) === JSON.stringify(runQuery(lesson.solution))
-    ) {
-      setCompleted((previous) =>
-        previous.includes(activeLesson)
-          ? previous
-          : [...previous, activeLesson],
-      );
-    }
-  }
-
-  /** Отмечает текущий теоретический урок пройденным. */
-  function completeLesson() {
-    setCompleted((previous) =>
-      previous.includes(activeLesson) ? previous : [...previous, activeLesson],
+  const activeCourse = courses.find((course) => course.id === activeCourseId);
+  const lesson = activeCourse?.lessons.find(
+    (item) => item.id === activeLessonId,
+  );
+  const completed = activeCourse
+    ? (completedByCourse[activeCourse.id] ?? [])
+    : [];
+  const progress = activeCourse?.lessons.length
+    ? Math.round((completed.length / activeCourse.lessons.length) * 100)
+    : 0;
+  const filteredCourses = useMemo(() => {
+    const query = search.trim().toLocaleLowerCase('ru');
+    return courses.filter(
+      (course) =>
+        !query ||
+        `${course.title} ${course.description} ${course.category}`
+          .toLocaleLowerCase('ru')
+          .includes(query),
     );
+  }, [search]);
+
+  function openCourse(course: CourseModule) {
+    setActiveCourseId(course.id);
+    setActiveLessonId(course.lessons[0]?.id ?? null);
+    setSearch('');
+  }
+
+  function markComplete(course: CourseModule, currentLesson: CourseLesson) {
+    setCompletedByCourse((previous) => {
+      const courseCompleted = previous[course.id] ?? [];
+      if (courseCompleted.includes(currentLesson.id)) return previous;
+      return {
+        ...previous,
+        [course.id]: [...courseCompleted, currentLesson.id],
+      };
+    });
+  }
+
+  function openCatalog() {
+    setActiveCourseId(null);
+    setActiveLessonId(null);
   }
 
   return (
-    <div className="app-shell">
-      <aside className="sidebar">
-        <a className="brand" href="#" aria-label="SQLook — на главную">
-          <span className="brand-mark">
+    <div className="platform-shell">
+      <aside className="platform-sidebar">
+        <a
+          className="platform-brand"
+          href="#"
+          aria-label="Учись шире — на главную"
+          onClick={(event) => {
+            event.preventDefault();
+            openCatalog();
+          }}
+        >
+          <span className="platform-brand-mark">
             <BrandMark />
           </span>
           <span>
-            sq<span className="brand-accent">look</span>
+            учись<span className="platform-brand-accent">.</span>
           </span>
         </a>
-        <div className="course-label">ТВОЙ ТРЕК</div>
-        <div className="course-card">
-          <div className="course-icon">⌘</div>
-          <div>
-            <strong>SQL с нуля</strong>
-            <span>Полная программа · 7 уровней</span>
-          </div>
-          <span className="course-chevron">⌄</span>
-        </div>
 
-        <div className="sidebar-section-title">
-          <span>УРОВНИ КУРСА</span>
-          <span className="section-count">
-            {String(lessons.length).padStart(2, '0')}
-          </span>
-        </div>
-        <nav className="lesson-nav" aria-label="Уроки">
-          {courseLevels.map((courseLevel) => {
-            const levelLessons = lessons
-              .map((item, index) => ({ item, index }))
-              .filter(({ item }) => item.section === courseLevel.id);
-            return (
-              <div className="course-level" key={courseLevel.id}>
-                <div className="course-level-heading">
-                  <span>
-                    {courseLevel.marker} УРОВЕНЬ {courseLevel.id}:{' '}
-                    {courseLevel.title}
-                  </span>
-                  <small>{levelLessons.length}</small>
-                </div>
-                {levelLessons.map(({ item, index }) => (
-                  <Button
-                    variant="unstyled"
-                    className={`lesson-link ${activeLesson === index ? 'active' : ''}`}
-                    key={item.title}
-                    onClick={() => selectLesson(index)}
-                  >
-                    <span
-                      className={`lesson-number ${completed.includes(index) ? 'done' : ''}`}
-                    >
-                      {completed.includes(index)
-                        ? '✓'
-                        : String(index + 1).padStart(2, '0')}
-                    </span>
-                    <span className="lesson-link-text">
-                      <span>{item.title}</span>
-                      <small>{item.subtitle}</small>
-                    </span>
-                    {activeLesson === index && <span className="active-dot" />}
-                  </Button>
-                ))}
-              </div>
-            );
-          })}
+        <Button
+          variant="unstyled"
+          className={`catalog-nav-link ${!activeCourse ? 'active' : ''}`}
+          onClick={openCatalog}
+        >
+          <span>⌂</span> Каталог тем
+        </Button>
+
+        <div className="platform-sidebar-label">НАПРАВЛЕНИЯ</div>
+        <nav className="topic-nav" aria-label="Направления обучения">
+          {courses.map((course) => (
+            <button
+              className={`topic-nav-link ${activeCourse?.id === course.id ? 'active' : ''}`}
+              key={course.id}
+              onClick={() => openCourse(course)}
+              type="button"
+            >
+              <span
+                className="topic-nav-icon"
+                style={{
+                  backgroundColor: `${course.color}18`,
+                  color: course.color,
+                }}
+              >
+                {course.icon}
+              </span>
+              <span>{course.title}</span>
+              <small>{course.lessons.length}</small>
+            </button>
+          ))}
         </nav>
 
-        <div className="sidebar-bottom">
-          <div className="streak-card">
-            <div className="streak-icon">✳</div>
-            <div>
-              <strong>Шаг за шагом</strong>
-              <span>От простого к сложному</span>
+        {activeCourse && (
+          <>
+            <div className="platform-sidebar-label curriculum-label">
+              ПРОГРАММА
             </div>
-          </div>
-          <div className="profile-button">
-            <span className="avatar">S</span>
-            <span className="profile-name">
-              <strong>SQLook</strong>
-              <small>Твой тренажёр</small>
-            </span>
-          </div>
+            <nav className="curriculum-nav" aria-label="Уроки курса">
+              {activeCourse.sections.map((section) => {
+                const sectionLessons = activeCourse.lessons.filter(
+                  (item) => item.sectionId === section.id,
+                );
+                return (
+                  <div className="curriculum-section" key={section.id}>
+                    <div className="curriculum-heading">
+                      <span>{section.marker}</span>
+                      <span>{section.title}</span>
+                      <small>{sectionLessons.length}</small>
+                    </div>
+                    {sectionLessons.map((item) => (
+                      <button
+                        className={`curriculum-lesson ${activeLessonId === item.id ? 'active' : ''}`}
+                        key={item.id}
+                        onClick={() => setActiveLessonId(item.id)}
+                        type="button"
+                      >
+                        <span
+                          className={`curriculum-number ${completed.includes(item.id) ? 'done' : ''}`}
+                        >
+                          {completed.includes(item.id) ? '✓' : ''}
+                        </span>
+                        <span>{item.title}</span>
+                      </button>
+                    ))}
+                  </div>
+                );
+              })}
+            </nav>
+          </>
+        )}
+
+        <div className="platform-sidebar-bottom">
+          <span className="platform-sidebar-bottom-icon">✳</span>
+          <span>
+            <strong>Учись в своём темпе</strong>
+            <small>Небольшой шаг каждый день</small>
+          </span>
         </div>
       </aside>
 
-      <main className="main-area">
-        <header className="topbar">
-          <div className="breadcrumbs">
-            <span>Мои курсы</span>
-            <i>/</i>
-            <strong>SQL с нуля</strong>
+      <main className="platform-main">
+        <header className="platform-topbar">
+          <div className="platform-breadcrumbs">
+            <button onClick={openCatalog} type="button">
+              Все направления
+            </button>
+            {activeCourse && (
+              <>
+                <span>/</span>
+                <strong>{activeCourse.title}</strong>
+              </>
+            )}
           </div>
-          <div className="topbar-right">
-            <div className="progress-label">
-              <span>Прогресс курса</span>
-              <strong>
-                {completed.length} из {lessons.length} уроков
-              </strong>
+          {activeCourse && (
+            <div className="platform-progress">
+              <span>
+                {completed.length} из {activeCourse.lessons.length} уроков
+              </span>
+              <ProgressBar value={progress} label="Прогресс курса" />
             </div>
-            <ProgressBar
-              value={progress}
-              label="Прогресс курса"
-              className="course-progress"
-            />
-            <span
-              className="help-button"
-              aria-label={`Уровень: ${lesson.level}`}
-            >
-              ?
-            </span>
-          </div>
+          )}
         </header>
 
-        <div className="workspace">
-          <section className="lesson-content">
-            <div className="lesson-overline">
-              <span>УРОК {String(activeLesson + 1).padStart(2, '0')}</span>
-              <i />
-              {lesson.level} · {lesson.subtitle}
+        {!activeCourse ? (
+          <section className="catalog-page">
+            <div className="catalog-eyebrow">
+              <span /> ПРОСТРАНСТВО ДЛЯ НОВЫХ ЗНАНИЙ
             </div>
             <h1>
-              {lesson.title}
-              <span className="title-period">.</span>
+              Учись тому,
+              <br />
+              что интересно<span>.</span>
             </h1>
-            <p className="lesson-description">{lesson.description}</p>
+            <p className="catalog-intro">
+              Выбирай направление, открывай новые темы и двигайся вперёд в
+              удобном темпе.
+            </p>
 
-            <Card className="concept-card">
-              <div className="concept-heading">
-                <span className="concept-icon">✳</span>
-                <div>
-                  <strong>Коротко о главном</strong>
-                  <span>Разберёмся на примере</span>
-                </div>
-              </div>
-              <p>{lesson.concept}</p>
-              <div className="example-query">
-                <span className="example-prompt">SQL</span>
-                <code>{lesson.example}</code>
-              </div>
-            </Card>
-
-            <div className="challenge-heading">
-              <span className="challenge-icon">↗</span>
+            <div className="catalog-section-header">
               <div>
-                <strong>
-                  {lesson.mode === 'practice' ? 'Твоя очередь' : 'Закрепи тему'}
-                </strong>
-                <span>
-                  {lesson.mode === 'practice'
-                    ? 'Практика · около 2 минут'
-                    : 'Материал · теоретическая тема'}
-                </span>
+                <h2>Все направления</h2>
+                <p>Найди тему для следующего шага</p>
               </div>
-              {completed.includes(activeLesson) && (
-                <Badge tone="success" className="completed-badge">
-                  ✓ Пройдено
-                </Badge>
-              )}
+              <label className="catalog-search">
+                <span aria-hidden="true">⌕</span>
+                <input
+                  aria-label="Поиск направления"
+                  onChange={(event) => setSearch(event.target.value)}
+                  placeholder="Найти тему"
+                  type="search"
+                  value={search}
+                />
+              </label>
             </div>
-            <p className="challenge-text">{lesson.challenge}</p>
 
-            {lesson.mode === 'practice' ? (
-              <>
-                <Card className="editor-card">
-                  <div className="editor-topline">
-                    <div className="editor-tab">
-                      <span className="tiny-dot" /> Запрос.sql{' '}
-                      <span className="unsaved-dot" />
-                    </div>
-                    <span className="editor-language">SQL</span>
-                  </div>
-                  <div className="editor-body">
-                    <div className="line-numbers" aria-hidden="true">
-                      {query.split('\n').map((_, index) => (
-                        <span key={index}>
-                          {String(index + 1).padStart(2, '0')}
-                        </span>
-                      ))}
-                    </div>
-                    <textarea
-                      aria-label="SQL-запрос"
-                      spellCheck={false}
-                      value={query}
-                      onChange={(event) => {
-                        setQuery(event.target.value);
-                        setResult(null);
-                      }}
-                      onKeyDown={(event) => {
-                        if (
-                          (event.metaKey || event.ctrlKey) &&
-                          event.key === 'Enter'
-                        )
-                          executeQuery();
-                        if (event.key === 'Tab') {
-                          event.preventDefault();
-                          const target = event.currentTarget;
-                          const start = target.selectionStart;
-                          const end = target.selectionEnd;
-                          setQuery(
-                            `${query.slice(0, start)}  ${query.slice(end)}`,
-                          );
-                          requestAnimationFrame(() =>
-                            target.setSelectionRange(start + 2, start + 2),
-                          );
-                        }
-                      }}
-                    />
-                  </div>
-                  <div className="editor-footer">
-                    <span>
-                      <span className="status-indicator" /> Учебная база данных
-                    </span>
-                    <span>
-                      ⌘ ↵ <span className="shortcut-label">запустить</span>
-                    </span>
-                  </div>
-                </Card>
-
-                <div className="action-row">
-                  <Button
-                    variant="secondary"
-                    onClick={() => setShowHint((visible) => !visible)}
-                  >
-                    <span>✦</span> {showHint ? 'Скрыть подсказку' : 'Подсказка'}
-                  </Button>
-                  <Button variant="primary" onClick={executeQuery}>
-                    Запустить запрос <span>↗</span>
-                  </Button>
-                </div>
-                {result && (
-                  <Card
-                    className={`result-panel ${result.error ? 'has-error' : isCorrect ? 'is-correct' : ''}`}
-                  >
-                    <div className="result-heading">
-                      <div>
-                        <span className="result-icon">
-                          {result.error ? '!' : isCorrect ? '✓' : '↳'}
-                        </span>
-                        <strong>
-                          {result.error
-                            ? 'Проверь запрос'
-                            : isCorrect
-                              ? 'Отлично, верно!'
-                              : 'Запрос выполнен'}
-                        </strong>
+            {filteredCourses.length ? (
+              <div className="catalog-grid">
+                {filteredCourses.map((course) => {
+                  const courseCompleted = completedByCourse[course.id] ?? [];
+                  const courseProgress = course.lessons.length
+                    ? Math.round(
+                        (courseCompleted.length / course.lessons.length) * 100,
+                      )
+                    : 0;
+                  return (
+                    <button
+                      className="course-card"
+                      key={course.id}
+                      onClick={() => openCourse(course)}
+                      style={
+                        { '--course-color': course.color } as CSSProperties
+                      }
+                      type="button"
+                    >
+                      <div className="course-card-top">
+                        <span className="course-card-icon">{course.icon}</span>
+                        <Badge tone="neutral">{course.category}</Badge>
                       </div>
-                      {!result.error && <span>{result.rows.length} строк</span>}
-                    </div>
-                    {result.error ? (
-                      <p className="error-message">{result.error}</p>
-                    ) : result.rows.length === 0 ? (
-                      <p className="empty-result">
-                        Запрос выполнен, но ничего не найдено. Проверь условие.
-                      </p>
-                    ) : (
-                      <div className="result-table-wrap">
-                        <DataTable
-                          className="result-table"
-                          columns={result.columns}
-                          rows={result.rows}
-                        />
+                      <h3>{course.title}</h3>
+                      <p>{course.description}</p>
+                      <div className="course-card-bottom">
+                        <span>
+                          {countLabel(course.sections.length, [
+                            'раздел',
+                            'раздела',
+                            'разделов',
+                          ])}{' '}
+                          ·{' '}
+                          {countLabel(course.lessons.length, [
+                            'урок',
+                            'урока',
+                            'уроков',
+                          ])}
+                        </span>
+                        <span className="course-card-arrow">↗</span>
                       </div>
-                    )}
-                  </Card>
-                )}
-              </>
+                      {courseProgress > 0 && (
+                        <div className="course-card-progress">
+                          <span style={{ width: `${courseProgress}%` }} />
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
             ) : (
-              <Card className="reading-example">
-                <div className="editor-topline">
-                  <div className="editor-tab">
-                    <span className="tiny-dot" /> Пример SQL
-                  </div>
-                  <span className="editor-language">ТЕОРИЯ</span>
-                </div>
-                <pre>{lesson.example}</pre>
-                <div className="reading-actions">
-                  <Button
-                    variant="secondary"
-                    onClick={() => setShowHint((visible) => !visible)}
-                  >
-                    <span>✦</span> {showHint ? 'Скрыть подсказку' : 'Подсказка'}
-                  </Button>
-                  {!completed.includes(activeLesson) && (
-                    <Button variant="primary" onClick={completeLesson}>
-                      Отметить тему пройденной <span>✓</span>
-                    </Button>
-                  )}
-                </div>
-              </Card>
+              <div className="catalog-empty">
+                По запросу «{search}» ничего не найдено. Попробуй другое
+                название.
+              </div>
             )}
 
-            {showHint && (
-              <Card className="hint-panel">
-                <span>✦</span>
-                <p>{lesson.tip}</p>
-              </Card>
-            )}
-
-            <div className="lesson-bottom">
-              <span>
-                {completed.includes(activeLesson)
-                  ? 'Урок пройден — так держать!'
-                  : 'Можно возвращаться к уроку в любое время'}
-              </span>
-              {activeLesson < lessons.length - 1 && (
-                <Button
-                  variant="text"
-                  onClick={() => selectLesson(activeLesson + 1)}
-                >
-                  Следующий урок <span>→</span>
-                </Button>
-              )}
+            <div className="catalog-note">
+              <span>✦</span>
+              <p>
+                <strong>Здесь найдётся место любой теме.</strong> Новые
+                направления и разделы подключаются отдельными модулями.
+              </p>
             </div>
           </section>
+        ) : lesson ? (
+          <div className="course-page">
+            <section className="lesson-content">
+              <div className="lesson-overline">
+                <span>
+                  УРОК{' '}
+                  {String(
+                    activeCourse.lessons.findIndex(
+                      (item) => item.id === lesson.id,
+                    ) + 1,
+                  ).padStart(2, '0')}
+                </span>
+                <i />
+                {
+                  activeCourse.sections.find(
+                    (section) => section.id === lesson.sectionId,
+                  )?.level
+                }{' '}
+                · {lesson.subtitle}
+              </div>
+              <h1>
+                {lesson.title}
+                <span className="title-period">.</span>
+              </h1>
+              <p className="lesson-description">{lesson.description}</p>
 
-          <aside className="right-panel">
-            <Card className="data-panel">
-              <div className="panel-title">
-                <div>
-                  <span className="table-icon">▦</span>
-                  <strong>Таблица данных</strong>
+              <Card className="concept-card">
+                <div className="concept-heading">
+                  <span className="concept-icon">✳</span>
+                  <div>
+                    <strong>Коротко о главном</strong>
+                    <span>Разберёмся на примере</span>
+                  </div>
                 </div>
-                <span className="row-count">8 строк</span>
+                <p>{lesson.concept}</p>
+                <div className="example-query">
+                  <span className="example-prompt">{activeCourse.title}</span>
+                  <code>{lesson.example}</code>
+                </div>
+              </Card>
+
+              <div className="challenge-heading">
+                <span className="challenge-icon">↗</span>
+                <div>
+                  <strong>
+                    {lesson.mode === 'practice'
+                      ? 'Твоя очередь'
+                      : 'Закрепи тему'}
+                  </strong>
+                  <span>
+                    {lesson.mode === 'practice'
+                      ? `Практика · около ${lesson.minutes} минут`
+                      : `Материал · ${lesson.minutes} минут`}
+                  </span>
+                </div>
+                {completed.includes(lesson.id) && (
+                  <Badge tone="success" className="completed-badge">
+                    ✓ Пройдено
+                  </Badge>
+                )}
               </div>
-              <div className="table-name">
-                <span className="table-green-dot" /> employees
-              </div>
-              <div className="schema-list">
-                <div>
-                  <span className="schema-type">#</span>
-                  <code>id</code>
-                  <small>integer</small>
-                </div>
-                <div>
-                  <span className="schema-type string">Aa</span>
-                  <code>name</code>
-                  <small>varchar</small>
-                </div>
-                <div>
-                  <span className="schema-type string">Aa</span>
-                  <code>role</code>
-                  <small>varchar</small>
-                </div>
-                <div>
-                  <span className="schema-type string">Aa</span>
-                  <code>department</code>
-                  <small>varchar</small>
-                </div>
-                <div>
-                  <span className="schema-type number">123</span>
-                  <code>salary</code>
-                  <small>integer</small>
-                </div>
-                <div>
-                  <span className="schema-type string">Aa</span>
-                  <code>city</code>
-                  <small>varchar</small>
-                </div>
-              </div>
-              <Button
-                variant="ghost"
-                onClick={() => setShowPreview((visible) => !visible)}
-              >
-                {showPreview ? 'Скрыть предпросмотр' : 'Предпросмотр таблицы'}{' '}
-                <span>{showPreview ? '⌃' : '⌄'}</span>
-              </Button>
-              {showPreview && (
-                <div className="table-preview">
-                  <DataTable
-                    columns={['name', 'department']}
-                    rows={[
-                      { name: 'Анна Смирнова', department: 'Engineering' },
-                      { name: 'Михаил Иванов', department: 'Design' },
-                      { name: 'Алексей Петров', department: 'Engineering' },
-                      { name: 'Мария Кузнецова', department: 'Analytics' },
-                    ]}
-                    getRowKey={(row) => row.name}
-                  />
-                </div>
+              <p className="challenge-text">{lesson.challenge}</p>
+
+              {activeCourse.Activity ? (
+                <activeCourse.Activity
+                  key={lesson.id}
+                  lessonId={lesson.id}
+                  onComplete={() => markComplete(activeCourse, lesson)}
+                />
+              ) : (
+                <Card className="reading-example">
+                  <div className="editor-topline">
+                    <div className="editor-tab">
+                      <span className="tiny-dot" /> Пример
+                    </div>
+                    <span className="editor-language">МАТЕРИАЛ</span>
+                  </div>
+                  <pre>{lesson.example}</pre>
+                  <div className="reading-actions">
+                    {!completed.includes(lesson.id) ? (
+                      <Button
+                        variant="primary"
+                        onClick={() => markComplete(activeCourse, lesson)}
+                      >
+                        Отметить пройденным <span>✓</span>
+                      </Button>
+                    ) : (
+                      <span className="reading-complete">
+                        Урок отмечен как пройденный ✓
+                      </span>
+                    )}
+                  </div>
+                </Card>
               )}
-            </Card>
-            <Card className="learn-card">
-              <div className="learn-card-top">
-                <span>✦</span>
-                <small>НА ЗАМЕТКУ</small>
+
+              <div className="lesson-bottom">
+                <span>
+                  {completed.includes(lesson.id)
+                    ? 'Урок пройден — так держать!'
+                    : 'Можно возвращаться к уроку в любое время'}
+                </span>
+                {activeCourse.lessons[
+                  activeCourse.lessons.findIndex(
+                    (item) => item.id === lesson.id,
+                  ) + 1
+                ] && (
+                  <Button
+                    variant="text"
+                    onClick={() => {
+                      const nextIndex =
+                        activeCourse.lessons.findIndex(
+                          (item) => item.id === lesson.id,
+                        ) + 1;
+                      setActiveLessonId(activeCourse.lessons[nextIndex].id);
+                    }}
+                  >
+                    Следующий урок <span>→</span>
+                  </Button>
+                )}
               </div>
-              <h3>
-                SQL — это диалог
-                <br />с твоими данными
-              </h3>
-              <p>
-                Ты задаёшь вопрос на языке запросов, а база данных находит
-                ответ. Просто и по делу.
-              </p>
-              <div className="learn-doodle" aria-hidden="true">
-                <span>SELECT</span>
-                <i>↗</i>
-                <b>data</b>
-              </div>
-            </Card>
-            <div className="keyboard-tip">
-              <span className="keyboard-icon">⌨</span>
-              <p>
-                Быстрый запуск
-                <br />
-                <kbd>⌘</kbd> <kbd>↵</kbd>
-                <span>нажми, чтобы выполнить запрос</span>
-              </p>
-            </div>
-          </aside>
-        </div>
+            </section>
+
+            <aside className="course-aside">
+              {activeCourse.Aside ? (
+                <activeCourse.Aside />
+              ) : (
+                <Card className="course-aside-card">
+                  <div className="course-aside-title">
+                    <span
+                      className="course-aside-icon"
+                      style={{
+                        backgroundColor: `${activeCourse.color}18`,
+                        color: activeCourse.color,
+                      }}
+                    >
+                      {activeCourse.icon}
+                    </span>
+                    <strong>О направлении</strong>
+                  </div>
+                  <p>{activeCourse.description}</p>
+                  <div className="course-aside-stat">
+                    <span>Разделов</span>
+                    <strong>{activeCourse.sections.length}</strong>
+                  </div>
+                  <div className="course-aside-stat">
+                    <span>Уроков пройдено</span>
+                    <strong>
+                      {completed.length} / {activeCourse.lessons.length}
+                    </strong>
+                  </div>
+                  <ProgressBar
+                    className="aside-progress"
+                    label={`Прогресс курса ${activeCourse.title}`}
+                    value={progress}
+                  />
+                </Card>
+              )}
+              <Card className="next-step-card">
+                <span>✦ МАЛЕНЬКИЙ ШАГ</span>
+                <h3>Знания складываются в большой путь.</h3>
+                <p>
+                  Проходи уроки в своём темпе и возвращайся к пройденным темам.
+                </p>
+              </Card>
+            </aside>
+          </div>
+        ) : (
+          <div className="course-empty">
+            <h1>Пока нет уроков</h1>
+            <p>Добавь уроки в программу этого направления.</p>
+          </div>
+        )}
       </main>
     </div>
   );
