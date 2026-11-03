@@ -6,7 +6,11 @@ type ProgressBarProps = {
   className?: string;
 };
 
-export function ProgressBar({ value, label, className = '' }: ProgressBarProps) {
+export function ProgressBar({
+  value,
+  label,
+  className = '',
+}: ProgressBarProps) {
   const boundedValue = Math.min(100, Math.max(0, value));
 
   return (

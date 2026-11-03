@@ -15,20 +15,88 @@ type Employee = {
 
 type Projection =
   | { kind: 'column'; column: keyof Employee; label: string }
-  | { kind: 'aggregate'; fn: 'COUNT' | 'SUM' | 'AVG' | 'MIN' | 'MAX'; column: keyof Employee | '*'; label: string };
+  | {
+      kind: 'aggregate';
+      fn: 'COUNT' | 'SUM' | 'AVG' | 'MIN' | 'MAX';
+      column: keyof Employee | '*';
+      label: string;
+    };
 
 const employees: Employee[] = [
-  { id: 1, name: 'Анна Смирнова', role: 'Frontend-разработчик', department: 'Engineering', salary: 125000, city: 'Москва' },
-  { id: 2, name: 'Михаил Иванов', role: 'Product Designer', department: 'Design', salary: 98000, city: 'Санкт-Петербург' },
-  { id: 3, name: 'Алексей Петров', role: 'Backend-разработчик', department: 'Engineering', salary: 142000, city: 'Москва' },
-  { id: 4, name: 'Мария Кузнецова', role: 'Аналитик', department: 'Analytics', salary: 105000, city: 'Казань' },
-  { id: 5, name: 'Артём Волков', role: 'QA-инженер', department: 'Engineering', salary: 91000, city: 'Москва' },
-  { id: 6, name: 'Елена Морозова', role: 'Product Manager', department: 'Product', salary: 135000, city: 'Санкт-Петербург' },
-  { id: 7, name: 'Ольга Соколова', role: 'UX-исследователь', department: 'Design', salary: 89000, city: 'Москва' },
-  { id: 8, name: 'Дмитрий Орлов', role: 'Data Engineer', department: 'Analytics', salary: 118000, city: 'Казань' },
+  {
+    id: 1,
+    name: 'Анна Смирнова',
+    role: 'Frontend-разработчик',
+    department: 'Engineering',
+    salary: 125000,
+    city: 'Москва',
+  },
+  {
+    id: 2,
+    name: 'Михаил Иванов',
+    role: 'Product Designer',
+    department: 'Design',
+    salary: 98000,
+    city: 'Санкт-Петербург',
+  },
+  {
+    id: 3,
+    name: 'Алексей Петров',
+    role: 'Backend-разработчик',
+    department: 'Engineering',
+    salary: 142000,
+    city: 'Москва',
+  },
+  {
+    id: 4,
+    name: 'Мария Кузнецова',
+    role: 'Аналитик',
+    department: 'Analytics',
+    salary: 105000,
+    city: 'Казань',
+  },
+  {
+    id: 5,
+    name: 'Артём Волков',
+    role: 'QA-инженер',
+    department: 'Engineering',
+    salary: 91000,
+    city: 'Москва',
+  },
+  {
+    id: 6,
+    name: 'Елена Морозова',
+    role: 'Product Manager',
+    department: 'Product',
+    salary: 135000,
+    city: 'Санкт-Петербург',
+  },
+  {
+    id: 7,
+    name: 'Ольга Соколова',
+    role: 'UX-исследователь',
+    department: 'Design',
+    salary: 89000,
+    city: 'Москва',
+  },
+  {
+    id: 8,
+    name: 'Дмитрий Орлов',
+    role: 'Data Engineer',
+    department: 'Analytics',
+    salary: 118000,
+    city: 'Казань',
+  },
 ];
 
-const employeeColumns = ['id', 'name', 'role', 'department', 'salary', 'city'] as const;
+const employeeColumns = [
+  'id',
+  'name',
+  'role',
+  'department',
+  'salary',
+  'city',
+] as const;
 
 function isEmployeeColumn(value: string): value is keyof Employee {
   return employeeColumns.some((column) => column === value);
@@ -41,7 +109,8 @@ function parseProjection(expression: string): Projection | null {
 
   if (aggregate) {
     const [, rawFunction, rawColumn, alias] = aggregate;
-    const fn = rawFunction.toUpperCase() as 'COUNT' | 'SUM' | 'AVG' | 'MIN' | 'MAX';
+    const fn = rawFunction.toUpperCase() as
+      'COUNT' | 'SUM' | 'AVG' | 'MIN' | 'MAX';
     const column = rawColumn.toLowerCase();
     if (column !== '*' && !isEmployeeColumn(column)) return null;
     if (column === '*' && fn !== 'COUNT') return null;
@@ -50,7 +119,9 @@ function parseProjection(expression: string): Projection | null {
       kind: 'aggregate',
       fn,
       column: column === '*' ? '*' : column,
-      label: (alias ?? `${fn.toLowerCase()}_${column === '*' ? 'all' : column}`).toLowerCase(),
+      label: (
+        alias ?? `${fn.toLowerCase()}_${column === '*' ? 'all' : column}`
+      ).toLowerCase(),
     };
   }
 
@@ -63,19 +134,28 @@ function parseProjection(expression: string): Projection | null {
 }
 
 function compareValues(left: string | number, right: string | number): number {
-  if (typeof left === 'number' && typeof right === 'number') return left - right;
+  if (typeof left === 'number' && typeof right === 'number')
+    return left - right;
   return String(left).localeCompare(String(right), 'ru');
 }
 
-function parseCondition(condition: string): ((employee: Employee) => boolean) | null {
+function parseCondition(
+  condition: string,
+): ((employee: Employee) => boolean) | null {
   const inMatch = condition.match(/^([a-z_]+)\s+IN\s*\((.+)\)$/i);
   if (inMatch) {
     const [, rawColumn, rawValues] = inMatch;
     const column = rawColumn.toLowerCase();
     if (!isEmployeeColumn(column)) return null;
-    const values = rawValues.split(',').map((value) => value.trim().replace(/^(['"])(.*)\1$/, '$2').toLowerCase());
+    const values = rawValues.split(',').map((value) =>
+      value
+        .trim()
+        .replace(/^(['"])(.*)\1$/, '$2')
+        .toLowerCase(),
+    );
     if (!values.length) return null;
-    return (employee) => values.includes(String(employee[column]).toLowerCase());
+    return (employee) =>
+      values.includes(String(employee[column]).toLowerCase());
   }
 
   const match = condition.match(/^([a-z_]+)\s*(=|>=|<=|>|<|LIKE)\s*(.+)$/i);
@@ -88,30 +168,46 @@ function parseCondition(condition: string): ((employee: Employee) => boolean) | 
   return (employee) => {
     const actual = employee[column];
     if (operator.toUpperCase() === 'LIKE') {
-      const pattern = value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/%/g, '.*').replace(/_/g, '.');
+      const pattern = value
+        .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+        .replace(/%/g, '.*')
+        .replace(/_/g, '.');
       return new RegExp(`^${pattern}$`, 'i').test(String(actual));
     }
 
     const actualNumber = Number(actual);
     const valueNumber = Number(value);
-    const left: string | number = value !== '' && Number.isFinite(valueNumber) && Number.isFinite(actualNumber)
-      ? actualNumber
-      : String(actual).toLowerCase();
-    const right: string | number = typeof left === 'number' ? valueNumber : value.toLowerCase();
+    const left: string | number =
+      value !== '' &&
+      Number.isFinite(valueNumber) &&
+      Number.isFinite(actualNumber)
+        ? actualNumber
+        : String(actual).toLowerCase();
+    const right: string | number =
+      typeof left === 'number' ? valueNumber : value.toLowerCase();
     const comparison = compareValues(left, right);
 
     switch (operator) {
-      case '=': return comparison === 0;
-      case '>': return comparison > 0;
-      case '<': return comparison < 0;
-      case '>=': return comparison >= 0;
-      case '<=': return comparison <= 0;
-      default: return false;
+      case '=':
+        return comparison === 0;
+      case '>':
+        return comparison > 0;
+      case '<':
+        return comparison < 0;
+      case '>=':
+        return comparison >= 0;
+      case '<=':
+        return comparison <= 0;
+      default:
+        return false;
     }
   };
 }
 
-function aggregateValue(projection: Extract<Projection, { kind: 'aggregate' }>, rows: Employee[]): number {
+function aggregateValue(
+  projection: Extract<Projection, { kind: 'aggregate' }>,
+  rows: Employee[],
+): number {
   const column = projection.column;
   if (projection.fn === 'COUNT') {
     if (column === '*') return rows.length;
@@ -123,11 +219,16 @@ function aggregateValue(projection: Extract<Projection, { kind: 'aggregate' }>, 
     .filter((value): value is number => typeof value === 'number');
   if (values.length === 0) return 0;
   switch (projection.fn) {
-    case 'SUM': return values.reduce((sum, value) => sum + value, 0);
-    case 'AVG': return values.reduce((sum, value) => sum + value, 0) / values.length;
-    case 'MIN': return Math.min(...values);
-    case 'MAX': return Math.max(...values);
-    default: return 0;
+    case 'SUM':
+      return values.reduce((sum, value) => sum + value, 0);
+    case 'AVG':
+      return values.reduce((sum, value) => sum + value, 0) / values.length;
+    case 'MIN':
+      return Math.min(...values);
+    case 'MAX':
+      return Math.max(...values);
+    default:
+      return 0;
   }
 }
 
@@ -144,18 +245,25 @@ function evaluateHaving(
   const aggregate = projections.find(
     (projection): projection is Extract<Projection, { kind: 'aggregate' }> =>
       projection.kind === 'aggregate' &&
-      (`${projection.fn}(${projection.column})`.toLowerCase() === target || projection.label === target),
+      (`${projection.fn}(${projection.column})`.toLowerCase() === target ||
+        projection.label === target),
   );
   const value = aggregate ? aggregateValue(aggregate, rows) : result[target];
   if (typeof value !== 'number') return null;
   const threshold = Number(rawValue);
   switch (operator) {
-    case '=': return value === threshold;
-    case '>': return value > threshold;
-    case '<': return value < threshold;
-    case '>=': return value >= threshold;
-    case '<=': return value <= threshold;
-    default: return false;
+    case '=':
+      return value === threshold;
+    case '>':
+      return value > threshold;
+    case '<':
+      return value < threshold;
+    case '>=':
+      return value >= threshold;
+    case '<=':
+      return value <= threshold;
+    default:
+      return false;
   }
 }
 
@@ -169,34 +277,70 @@ export function runQuery(input: string): QueryResult {
     /^SELECT\s+(DISTINCT\s+)?(.+?)\s+FROM\s+employees(?:\s+WHERE\s+(.+?))?(?:\s+GROUP\s+BY\s+([a-z_]+))?(?:\s+HAVING\s+(.+?))?(?:\s+ORDER\s+BY\s+([a-z_]+)(?:\s+(ASC|DESC))?)?(?:\s+LIMIT\s+(\d+))?$/i,
   );
   if (!match) {
-    return error('Не удалось разобрать запрос. Поддерживаются SELECT, WHERE, GROUP BY, HAVING, ORDER BY и LIMIT для employees.');
+    return error(
+      'Не удалось разобрать запрос. Поддерживаются SELECT, WHERE, GROUP BY, HAVING, ORDER BY и LIMIT для employees.',
+    );
   }
 
-  const [, distinctFlag, rawSelection, whereClause, rawGroupColumn, havingClause, rawOrderColumn, orderDirection, limitValue] = match;
+  const [
+    ,
+    distinctFlag,
+    rawSelection,
+    whereClause,
+    rawGroupColumn,
+    havingClause,
+    rawOrderColumn,
+    orderDirection,
+    limitValue,
+  ] = match;
   const selection = rawSelection.trim();
   const selectedAll = selection === '*';
   const parsedProjections = selectedAll
-    ? employeeColumns.map((column): Projection => ({ kind: 'column', column, label: column }))
+    ? employeeColumns.map((column): Projection => ({
+        kind: 'column',
+        column,
+        label: column,
+      }))
     : selection.split(',').map((item) => parseProjection(item.trim()));
-  const validProjections = parsedProjections.filter((projection): projection is Projection => projection !== null);
+  const validProjections = parsedProjections.filter(
+    (projection): projection is Projection => projection !== null,
+  );
   if (validProjections.length !== parsedProjections.length) {
-    return error(`Неизвестное выражение SELECT. Доступны столбцы: ${employeeColumns.join(', ')} и агрегатные функции COUNT, SUM, AVG, MIN, MAX.`);
+    return error(
+      `Неизвестное выражение SELECT. Доступны столбцы: ${employeeColumns.join(', ')} и агрегатные функции COUNT, SUM, AVG, MIN, MAX.`,
+    );
   }
 
   let groupColumn: keyof Employee | undefined;
   if (rawGroupColumn) {
     const candidate = rawGroupColumn.toLowerCase();
-    if (!isEmployeeColumn(candidate)) return error(`Неизвестный столбец для группировки: ${rawGroupColumn}.`);
+    if (!isEmployeeColumn(candidate))
+      return error(`Неизвестный столбец для группировки: ${rawGroupColumn}.`);
     groupColumn = candidate;
   }
-  if (groupColumn && validProjections.some((projection) => projection.kind === 'column' && projection.column !== groupColumn)) {
-    return error('В SELECT можно использовать только столбец GROUP BY и агрегатные функции.');
+  if (
+    groupColumn &&
+    validProjections.some(
+      (projection) =>
+        projection.kind === 'column' && projection.column !== groupColumn,
+    )
+  ) {
+    return error(
+      'В SELECT можно использовать только столбец GROUP BY и агрегатные функции.',
+    );
   }
-  const hasAggregate = validProjections.some((projection) => projection.kind === 'aggregate');
-  if (hasAggregate && validProjections.some((projection) => projection.kind === 'column') && !groupColumn) {
+  const hasAggregate = validProjections.some(
+    (projection) => projection.kind === 'aggregate',
+  );
+  if (
+    hasAggregate &&
+    validProjections.some((projection) => projection.kind === 'column') &&
+    !groupColumn
+  ) {
     return error('Добавь GROUP BY для выбранных обычных столбцов.');
   }
-  if (havingClause && !groupColumn && !hasAggregate) return error('HAVING используется с GROUP BY или агрегатными функциями.');
+  if (havingClause && !groupColumn && !hasAggregate)
+    return error('HAVING используется с GROUP BY или агрегатными функциями.');
 
   let filtered = [...employees];
   if (whereClause) {
@@ -204,13 +348,18 @@ export function runQuery(input: string): QueryResult {
     const predicates = alternatives.map((alternative) => {
       const conditions = alternative.split(/\s+AND\s+/i).map(parseCondition);
       return conditions.every((condition) => condition !== null)
-        ? (employee: Employee) => conditions.every((condition) => condition?.(employee) ?? false)
+        ? (employee: Employee) =>
+            conditions.every((condition) => condition?.(employee) ?? false)
         : null;
     });
     if (predicates.some((predicate) => predicate === null)) {
-      return error('Проверь условие WHERE. Поддерживаются сравнения, LIKE, IN, AND и OR.');
+      return error(
+        'Проверь условие WHERE. Поддерживаются сравнения, LIKE, IN, AND и OR.',
+      );
     }
-    filtered = filtered.filter((employee) => predicates.some((predicate) => predicate?.(employee) ?? false));
+    filtered = filtered.filter((employee) =>
+      predicates.some((predicate) => predicate?.(employee) ?? false),
+    );
   }
 
   const shouldAggregate = Boolean(groupColumn || hasAggregate);
@@ -228,22 +377,39 @@ export function runQuery(input: string): QueryResult {
     resultRows = [...groups.values()].map((group) => {
       const result: Record<string, string | number> = {};
       validProjections.forEach((projection) => {
-        result[projection.label] = projection.kind === 'aggregate'
-          ? aggregateValue(projection, group)
-          : group[0]?.[projection.column] ?? '';
+        result[projection.label] =
+          projection.kind === 'aggregate'
+            ? aggregateValue(projection, group)
+            : (group[0]?.[projection.column] ?? '');
       });
       return result;
     });
 
     if (havingClause) {
       const retainedGroups = resultRows.filter((row, index) => {
-        const matches = evaluateHaving(havingClause, validProjections, [...groups.values()][index], row);
+        const matches = evaluateHaving(
+          havingClause,
+          validProjections,
+          [...groups.values()][index],
+          row,
+        );
         return matches ?? false;
       });
-      if (retainedGroups.length !== resultRows.length && resultRows.some((row, index) =>
-        evaluateHaving(havingClause, validProjections, [...groups.values()][index], row) === null,
-      )) {
-        return error('Проверь HAVING: сравни агрегат или его псевдоним с числом.');
+      if (
+        retainedGroups.length !== resultRows.length &&
+        resultRows.some(
+          (row, index) =>
+            evaluateHaving(
+              havingClause,
+              validProjections,
+              [...groups.values()][index],
+              row,
+            ) === null,
+        )
+      ) {
+        return error(
+          'Проверь HAVING: сравни агрегат или его псевдоним с числом.',
+        );
       }
       resultRows = retainedGroups;
     }
@@ -251,7 +417,8 @@ export function runQuery(input: string): QueryResult {
     resultRows = filtered.map((employee) => {
       const result: Record<string, string | number> = {};
       validProjections.forEach((projection) => {
-        if (projection.kind === 'column') result[projection.label] = employee[projection.column];
+        if (projection.kind === 'column')
+          result[projection.label] = employee[projection.column];
       });
       return result;
     });
@@ -269,16 +436,26 @@ export function runQuery(input: string): QueryResult {
 
   if (rawOrderColumn) {
     const orderColumn = rawOrderColumn.toLowerCase();
-    const projection = validProjections.find((item) => item.label === orderColumn);
-    const employeeColumn = isEmployeeColumn(orderColumn) ? orderColumn : undefined;
+    const projection = validProjections.find(
+      (item) => item.label === orderColumn,
+    );
+    const employeeColumn = isEmployeeColumn(orderColumn)
+      ? orderColumn
+      : undefined;
     const resultKey = projection?.label ?? employeeColumn;
-    if (!resultKey) return error(`Неизвестный столбец для сортировки: ${rawOrderColumn}.`);
+    if (!resultKey)
+      return error(`Неизвестный столбец для сортировки: ${rawOrderColumn}.`);
     if (shouldAggregate && !resultRows.every((row) => resultKey in row)) {
-      return error('При группировке ORDER BY должен использовать столбец из SELECT.');
+      return error(
+        'При группировке ORDER BY должен использовать столбец из SELECT.',
+      );
     }
     const direction = orderDirection?.toUpperCase() === 'DESC' ? -1 : 1;
     resultRows.sort((left, right) => {
-      const comparison = compareValues(left[resultKey] ?? '', right[resultKey] ?? '');
+      const comparison = compareValues(
+        left[resultKey] ?? '',
+        right[resultKey] ?? '',
+      );
       return comparison * direction;
     });
   }

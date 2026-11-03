@@ -14,7 +14,10 @@ export function Button({
   ...props
 }: ButtonProps) {
   return (
-    <button className={`ui-button ui-button--${variant} ${className}`.trim()} {...props}>
+    <button
+      className={`ui-button ui-button--${variant} ${className}`.trim()}
+      {...props}
+    >
       {children}
     </button>
   );

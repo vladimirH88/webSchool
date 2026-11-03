@@ -16,12 +16,18 @@ export function DataTable<Row extends Record<string, string | number>>({
   return (
     <table className={`ui-data-table ${className}`.trim()}>
       <thead>
-        <tr>{columns.map((column) => <th key={column}>{column}</th>)}</tr>
+        <tr>
+          {columns.map((column) => (
+            <th key={column}>{column}</th>
+          ))}
+        </tr>
       </thead>
       <tbody>
         {rows.map((row, index) => (
           <tr key={getRowKey?.(row, index) ?? index}>
-            {columns.map((column) => <td key={column}>{row[column]}</td>)}
+            {columns.map((column) => (
+              <td key={column}>{row[column]}</td>
+            ))}
           </tr>
         ))}
       </tbody>
