@@ -2274,3 +2274,122 @@ h1 {
     animation-duration: 0.01ms !important;
   }
 }
+
+.lesson-overline {
+  font-size: 11px;
+}
+
+.lesson-description {
+  font-size: 15px;
+}
+
+.concept-heading strong,
+.challenge-heading strong {
+  font-size: 13px;
+}
+
+.concept-heading > div span,
+.challenge-heading > div span {
+  font-size: 11px;
+}
+
+.concept-card > p {
+  max-width: none;
+  font-size: 16px;
+}
+
+.lesson-details {
+  font-size: 14px;
+}
+
+.concept-card p code {
+  font-size: 13px;
+}
+
+.example-prompt,
+.lesson-walkthrough strong {
+  font-size: 11px;
+}
+
+.example-query code,
+.example-output pre,
+.reading-example pre {
+  font-size: 14px;
+}
+
+.example-output > span,
+.lesson-walkthrough p,
+.lesson-practice-result {
+  font-size: 13px;
+}
+
+.lesson-practice-heading strong {
+  font-size: 13px;
+}
+
+.lesson-practice-heading small {
+  font-size: 11px;
+}
+
+.lesson-practice ol {
+  font-size: 14px;
+}
+
+.challenge-text {
+  font-size: 15px;
+}
+
+.lesson-link-text > span {
+  font-size: 12px;
+}
+
+.lesson-link-text small {
+  font-size: 9px;
+}
+
+.catalog-intro,
+.catalog-grid .course-card > p,
+.course-aside-card > p {
+  font-size: 14px;
+}
+
+.catalog-section-header p,
+.catalog-grid .course-card-bottom,
+.course-aside-stat {
+  font-size: 12px;
+}
+
+.catalog-search input,
+.course-aside-title,
+.next-step-card p {
+  font-size: 13px;
+}
+
+.catalog-note p,
+.next-step-card h3 {
+  font-size: 14px;
+}
+
+@media (max-width: 560px) {
+  .concept-card > p {
+    font-size: 15px;
+  }
+
+  .lesson-details,
+  .lesson-practice ol {
+    font-size: 13px;
+  }
+
+  .example-query code,
+  .example-output pre,
+  .reading-example pre {
+    font-size: 13px;
+  }
+
+  .challenge-text,
+  .catalog-intro,
+  .catalog-grid .course-card > p,
+  .course-aside-card > p {
+    font-size: 14px;
+  }
+}

@@ -359,7 +359,7 @@ export default function App() {
                     <span>↗</span>
                     <div>
                       <strong>Попробуй самостоятельно</strong>
-                      <small>Практика в своей Docker-среде</small>
+                      <small>Практика в среде разработки</small>
                     </div>
                   </div>
                   <ol>
